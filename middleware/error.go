@@ -46,13 +46,13 @@ func APIErrorHandler() gin.HandlerFunc {
 			"path":    c.Request.URL.Path,
 			"method":  c.Request.Method,
 			"user_ip": c.ClientIP(),
-		}).Error("Необработанная внутренняя ошибка")
+		}).Error("Unhandled internal error")
 
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
 			gin.H{
 				"code":    http.StatusInternalServerError,
-				"message": "Внутренняя ошибка сервера",
+				"message": "Internal Server Error",
 			},
 		)
 	}
@@ -79,7 +79,7 @@ func APIWebSocketErrorHandle(conn *websocket.Conn, err error, fields logrus.Fiel
 		fields = logrus.Fields{}
 	}
 	fields["protocol"] = "websocket"
-	appErr := apperror.ErrorHandler(err, fields)
+	appErr := apperror.LogErrorHandler(err, fields)
 	var response WebSocketErrorResponse
 	if appErr != nil {
 		response = WebSocketErrorResponse{
@@ -91,10 +91,10 @@ func APIWebSocketErrorHandle(conn *websocket.Conn, err error, fields logrus.Fiel
 		response = WebSocketErrorResponse{
 			Type:    "error",
 			Code:    500,
-			Message: "Произошла внутренняя ошибка сервера",
+			Message: "Internal Server Error",
 		}
 	}
 	if writeErr := conn.WriteJSON(response); writeErr != nil {
-		logger.Get().WithError(writeErr).Error("Не удалось отправить сообщение об ошибке по WebSocket")
+		logger.Get().WithError(writeErr).Error("Failed to send error message over WebSocket")
 	}
 }

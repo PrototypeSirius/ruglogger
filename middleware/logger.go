@@ -52,7 +52,7 @@ func APIStructuredLog() gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			logEntry.Error(c.Errors.String())
 		} else {
-			logEntry.Info("запрос обработан")
+			logEntry.Info("Request processed")
 		}
 	}
 }

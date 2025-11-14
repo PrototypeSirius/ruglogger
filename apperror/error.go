@@ -62,34 +62,22 @@ func (e *AppError) MarshalJSON() ([]byte, error) {
 // SystemError - это хелпер для создания стандартной внутренней ошибки сервера (500).
 // Скрывает от клиента детали системной ошибки, возвращая общее сообщение.
 func SystemError(err error) *AppError {
-	return New(err, http.StatusInternalServerError, "Внутренняя ошибка сервера")
+	return New(err, http.StatusInternalServerError, "Internal Server Error")
 }
 func BadRequestError(message string, err error) *AppError {
 	if message == "" {
-		message = "Некорректный запрос"
+		message = "Incorrect request"
 	}
 	return New(err, http.StatusBadRequest, message)
 }
 func UnauthorizedError(message string, err error) *AppError {
 	if message == "" {
-		message = "Неавторизован"
+		message = "Unauthorized"
 	}
 	return New(err, http.StatusUnauthorized, message)
 }
 
-// ErrorHandler - это универсальный хелпер для логирования ошибок.
-// Он принимает ошибку и опциональные поля для дополнительного контекста.
-// Функция автоматически определяет, является ли ошибка типом AppError,
-// и логирует ее в правильном структурированном формате.
-//
-// Параметры:
-//   - err: Ошибка, которую нужно обработать. Если err == nil, функция ничего не делает.
-//   - fields: Опциональные поля logrus.Fields для добавления контекста в лог-запись.
-//
-// Возвращает:
-//   - *AppError: Если исходная ошибка (или одна из обернутых) была AppError, возвращает ее.
-//   - nil: В противном случае.
-func ErrorHandler(err error, fields logrus.Fields) *AppError {
+func LogErrorHandler(err error, fields logrus.Fields) *AppError {
 
 	if err == nil {
 		return nil
@@ -107,7 +95,6 @@ func ErrorHandler(err error, fields logrus.Fields) *AppError {
 		return appErr
 	}
 
-	logEntry.WithField("error", err).Error("Произошла неклассифицированная ошибка")
-
+	logEntry.WithField("error", err).Error("Non-standard error")
 	return nil
 }

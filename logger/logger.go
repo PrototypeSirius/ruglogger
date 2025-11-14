@@ -62,7 +62,7 @@ func Init(opts ...Option) {
 // а не получать nil pointer exception в случайных местах.
 func Get() *logrus.Logger {
 	if log == nil {
-		panic("логгер не был инициализирован, вызовите logger.Init() в main.go")
+		panic("The logger has not been initialized, call logger.Init() in main.go")
 	}
 	return log
 }
