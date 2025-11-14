@@ -20,7 +20,7 @@ func TestAppError_ErrorInterface(t *testing.T) {
 }
 
 func TestAppError_MarshalJSON(t *testing.T) {
-	appErr := SystemError(errors.New("секретная ошибка базы данных"))
+	appErr := SystemError("ошибка базы данных", errors.New("секретная ошибка базы данных"))
 	jsonData, err := json.Marshal(appErr)
 	require.NoError(t, err)
 	expectedJSON := `{"message":"Внутренняя ошибка сервера","code":500}`

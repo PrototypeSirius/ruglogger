@@ -62,8 +62,11 @@ func (e *AppError) MarshalJSON() ([]byte, error) {
 
 // SystemError - это хелпер для создания стандартной внутренней ошибки сервера (500).
 // Скрывает от клиента детали системной ошибки, возвращая общее сообщение.
-func SystemError(err error) *AppError {
-	return New(err, http.StatusInternalServerError, "Internal Server Error")
+func SystemError(message string, err error) *AppError {
+	if message == "" {
+		message = "Internal Server Error"
+	}
+	return New(err, http.StatusInternalServerError, message)
 }
 func BadRequestError(message string, err error) *AppError {
 	if message == "" {
