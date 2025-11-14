@@ -11,12 +11,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// maxBodySize определяет максимальный размер тела запроса (в байтах), который будет прочитан для логирования.
-// Это мера безопасности, предотвращающая исчерпание памяти сервера при получении очень больших запросов (DoS-атака).
 const maxBodySize = 16384 // 16 KB
-// StructuredLog - это middleware для Gin, которое логирует каждый запрос и ответ в структурированном JSON-формате.
-// В лог включается информация о времени ответа (latency), HTTP-статусе, IP клиента, методе, пути и т.д.
-func APIStructuredLog() gin.HandlerFunc {
+
+func StructuredLogHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
@@ -47,6 +44,14 @@ func APIStructuredLog() gin.HandlerFunc {
 
 		if rawQuery != "" {
 			logEntry = logEntry.WithField("query", rawQuery)
+		}
+
+		if len(c.Request.Cookies()) > 0 {
+			ckookie := logrus.Fields{}
+			for _, cookie := range c.Request.Cookies() {
+				ckookie[cookie.Name] = cookie.Value
+			}
+			logEntry = logEntry.WithField("cookies", ckookie)
 		}
 
 		if len(c.Errors) > 0 {

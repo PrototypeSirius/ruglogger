@@ -14,15 +14,15 @@ import (
 func TestAppError_ErrorInterface(t *testing.T) {
 
 	originalErr := errors.New("оригинальная ошибка")
-	appErr := New(originalErr, http.StatusBadRequest, "публичное сообщение")
+	appErr := New(originalErr, http.StatusBadRequest, 101, "публичное сообщение")
 	assert.Equal(t, "оригинальная ошибка", appErr.Error())
 	assert.True(t, errors.Is(appErr, originalErr))
 }
 
 func TestAppError_MarshalJSON(t *testing.T) {
-	appErr := SystemError("ошибка базы данных", errors.New("секретная ошибка базы данных"))
+	appErr := New(errors.New("секретная ошибка базы данных"), http.StatusInternalServerError, 100, "Внутренняя ошибка сервера")
 	jsonData, err := json.Marshal(appErr)
 	require.NoError(t, err)
-	expectedJSON := `{"message":"Внутренняя ошибка сервера","code":500}`
+	expectedJSON := `{"message":"Внутренняя ошибка сервера","app_code":100}`
 	assert.JSONEq(t, expectedJSON, string(jsonData))
 }
