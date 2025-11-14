@@ -3,6 +3,7 @@ package apperror
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/PrototypeSirius/ruglogger/logger"
@@ -75,6 +76,18 @@ func UnauthorizedError(message string, err error) *AppError {
 		message = "Unauthorized"
 	}
 	return New(err, http.StatusUnauthorized, message)
+}
+
+func ErrorChecker(appErr *AppError) {
+	if appErr.Err != nil {
+		log.Printf("[ERROR] %s: %v", appErr.Message, appErr.Err)
+	}
+}
+
+func FatalErrorChecker(appErr *AppError) {
+	if appErr.Err != nil {
+		log.Fatalf("[ERROR] %s: %v", appErr.Message, appErr.Err)
+	}
 }
 
 func LogErrorHandler(err error, fields logrus.Fields) *AppError {
