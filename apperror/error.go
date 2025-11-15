@@ -53,9 +53,11 @@ func (e *AppError) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// === Хелперы-конструкторы для типовых ошибок ===
-
 // SystemError создает ошибку для внутренних сбоев сервера (HTTP 500).
+// err - исходная, системная ошибка для логирования.
+// appCode - уникальный внутренний код ошибки для удобства отладки и
+// автоматической обработки на клиенте (например, 9000 - "Internal Server Error").
+// message - публичное, безопасное сообщение для клиента.
 func SystemError(err error, message string) *AppError {
 	if message == "" {
 		message = "Internal Server Error"
@@ -64,6 +66,9 @@ func SystemError(err error, message string) *AppError {
 }
 
 // BadRequestError создает ошибку для некорректных запросов клиента (HTTP 400).
+// err - исходная, системная ошибка для логирования.
+// appCode - уникальный внутренний код ошибки для удобства отладки и автоматической обработки на клиенте (например, 1001 - "пользователь не найден").
+// message - публичное, безопасное сообщение для клиента.
 func BadRequestError(err error, appCode int, message string) *AppError {
 	if message == "" {
 		message = "Invalid request"
@@ -72,6 +77,9 @@ func BadRequestError(err error, appCode int, message string) *AppError {
 }
 
 // NotFoundError создает ошибку "не найдено" (HTTP 404).
+// err - исходная, системная ошибка для логирования.
+// appCode - уникальный внутренний код ошибки для удобства отладки и
+// автоматической обработки на клиенте (например, 1001 - "пользователь
 func NotFoundError(err error, appCode int, message string) *AppError {
 	if message == "" {
 		message = "Resource not found"
@@ -79,6 +87,16 @@ func NotFoundError(err error, appCode int, message string) *AppError {
 	return New(err, http.StatusNotFound, appCode, message)
 }
 
+// CustomError создает ошибку с указанным HTTP-статусом, уникальным кодом
+// приложения и сообщением для клиента.
+//
+// err - исходная, системная ошибка для логирования.
+//
+// httpStatus - стандартный HTTP-статус (400, 404, 500)...
+// appCode - уникальный внутренний код ошибки для удобства отладки и
+// автоматической обработки на клиенте (например, 1001 - "пользователь не найден").
+//
+// message - публичное, безопасное сообщение для клиента.
 func CustomError(err error, httpStatus int, appCode int, message string) *AppError {
 	return New(err, httpStatus, appCode, message)
 }

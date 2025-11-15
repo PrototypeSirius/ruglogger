@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestInit_SingletonPattern проверяет, что `Init` действительно выполняется только один раз.
 func TestInit_SingletonPattern(t *testing.T) {
 	buffer1 := new(bytes.Buffer)
 	buffer2 := new(bytes.Buffer)

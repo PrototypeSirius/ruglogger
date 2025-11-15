@@ -46,6 +46,14 @@ func StructuredLogHandler() gin.HandlerFunc {
 			logEntry = logEntry.WithField("query", rawQuery)
 		}
 
+		if len(c.Request.Header) > 0 {
+			hheader := logrus.Fields{}
+			for k, v := range c.Request.Header {
+				hheader[k] = v
+			}
+			logEntry = logEntry.WithField("headers", hheader)
+		}
+
 		if len(c.Request.Cookies()) > 0 {
 			ckookie := logrus.Fields{}
 			for _, cookie := range c.Request.Cookies() {

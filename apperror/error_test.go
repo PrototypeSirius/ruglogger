@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestAppError_ErrorInterface проверяет, что AppError корректно реализует интерфейс error.
 func TestAppError_ErrorInterface(t *testing.T) {
 
 	originalErr := errors.New("оригинальная ошибка")
