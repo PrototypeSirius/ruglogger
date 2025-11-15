@@ -57,7 +57,7 @@ func HandleWebSocketError(conn *websocket.Conn, err error, fields logrus.Fields)
 
 	var appErr *apperror.AppError
 	if !errors.As(err, &appErr) {
-		appErr = apperror.SystemError(err, "")
+		appErr = apperror.SystemError(err, 9404, "")
 	}
 
 	logFields := fields

@@ -58,11 +58,11 @@ func (e *AppError) MarshalJSON() ([]byte, error) {
 // appCode - уникальный внутренний код ошибки для удобства отладки и
 // автоматической обработки на клиенте (например, 9000 - "Internal Server Error").
 // message - публичное, безопасное сообщение для клиента.
-func SystemError(err error, message string) *AppError {
+func SystemError(err error, appCode int, message string) *AppError {
 	if message == "" {
 		message = "Internal Server Error"
 	}
-	return New(err, http.StatusInternalServerError, 9000, message)
+	return New(err, http.StatusInternalServerError, appCode, message)
 }
 
 // BadRequestError создает ошибку для некорректных запросов клиента (HTTP 400).
