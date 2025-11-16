@@ -54,6 +54,47 @@ func Get() *logrus.Logger {
 	return log
 }
 
+func SimpleLog(level logrus.Level, message string, fields ...logrus.Fields) {
+	var entry logrus.FieldLogger = Get()
+
+	if len(fields) > 0 && fields[0] != nil {
+		entry = entry.WithFields(fields[0])
+	}
+
+	switch level {
+	case logrus.DebugLevel:
+		entry.Debug(message)
+	case logrus.InfoLevel:
+		entry.Info(message)
+	case logrus.WarnLevel:
+		entry.Warn(message)
+	case logrus.ErrorLevel:
+		entry.Error(message)
+	case logrus.FatalLevel:
+		entry.Fatal(message)
+	case logrus.PanicLevel:
+		entry.Panic(message)
+	default:
+		entry.Info(message)
+	}
+}
+
+func Info(message string, fields ...logrus.Fields) {
+	SimpleLog(logrus.InfoLevel, message, fields...)
+}
+
+func Debug(message string, fields ...logrus.Fields) {
+	SimpleLog(logrus.DebugLevel, message, fields...)
+}
+
+func Trace(message string, fields ...logrus.Fields) {
+	SimpleLog(logrus.TraceLevel, message, fields...)
+}
+
+func Warn(message string, fields ...logrus.Fields) {
+	SimpleLog(logrus.WarnLevel, message, fields...)
+}
+
 func LogOnError(err error, message string, fields ...logrus.Fields) {
 	if err == nil {
 		return
@@ -74,11 +115,6 @@ func FatalOnError(err error, message string, fields ...logrus.Fields) {
 		entry = entry.WithFields(fields[0])
 	}
 	entry.Fatal(message) // .Fatal() = .Error() + os.Exit(1)
-}
-
-func SimpleLog(message string, fields ...logrus.Fields) {
-	entry := Get().WithFields(fields[0])
-	entry.Info(message)
 }
 
 func ResetForTest() {
