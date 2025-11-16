@@ -76,6 +76,11 @@ func FatalOnError(err error, message string, fields ...logrus.Fields) {
 	entry.Fatal(message) // .Fatal() = .Error() + os.Exit(1)
 }
 
+func SimpleLog(message string, fields ...logrus.Fields) {
+	entry := Get().WithFields(fields[0])
+	entry.Info(message)
+}
+
 func ResetForTest() {
 	log = nil
 	once = sync.Once{}
