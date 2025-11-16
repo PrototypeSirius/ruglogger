@@ -1,10 +1,12 @@
 package logger
 
 import (
+	"errors"
 	"io"
 	"os"
 	"sync"
 
+	"github.com/PrototypeSirius/ruglogger/apperror"
 	"github.com/sirupsen/logrus"
 )
 
@@ -56,7 +58,6 @@ func Get() *logrus.Logger {
 
 func SimpleLog(level logrus.Level, message string, fields ...logrus.Fields) {
 	var entry logrus.FieldLogger = Get()
-
 	if len(fields) > 0 && fields[0] != nil {
 		entry = entry.WithFields(fields[0])
 	}
@@ -100,6 +101,11 @@ func LogOnError(err error, message string, fields ...logrus.Fields) {
 		return
 	}
 	entry := Get().WithField("error", err)
+	var appErr *apperror.AppError
+	if !errors.As(err, &appErr) {
+		entry = entry.WithFields(logrus.Fields{"app_code": appErr.AppCode, "message": appErr.Message})
+	}
+
 	if len(fields) > 0 {
 		entry = entry.WithFields(fields[0])
 	}
@@ -111,6 +117,10 @@ func FatalOnError(err error, message string, fields ...logrus.Fields) {
 		return
 	}
 	entry := Get().WithField("fatal_error", err)
+	var appErr *apperror.AppError
+	if !errors.As(err, &appErr) {
+		entry = entry.WithFields(logrus.Fields{"app_code": appErr.AppCode, "message": appErr.Message})
+	}
 	if len(fields) > 0 {
 		entry = entry.WithFields(fields[0])
 	}

@@ -24,10 +24,9 @@ func ErrorHandler() gin.HandlerFunc {
 		var appErr *apperror.AppError
 
 		if errors.As(lastErr, &appErr) {
-			logger.LogOnError(appErr, appErr.Message, logrus.Fields{
-				"path":     c.Request.URL.Path,
-				"method":   c.Request.Method,
-				"app_code": appErr.AppCode,
+			logger.LogOnError(appErr, "Handled internal error", logrus.Fields{
+				"path":   c.Request.URL.Path,
+				"method": c.Request.Method,
 			})
 			c.AbortWithStatusJSON(appErr.HTTPStatus, appErr)
 		} else {
