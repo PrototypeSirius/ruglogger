@@ -3,6 +3,8 @@ package apperror
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 // AppError представляет кастомный тип ошибки.
@@ -20,7 +22,7 @@ type AppError struct {
 }
 
 // New - основной конструктор для AppError.
-func New(err error, httpStatus int, appCode int, message string) *AppError {
+func New(err error, httpStatus int, appCode int, message string, fields ...logrus.Fields) *AppError {
 	return &AppError{
 		Err:        err,
 		Message:    message,

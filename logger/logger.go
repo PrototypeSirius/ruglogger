@@ -102,7 +102,7 @@ func LogOnError(err error, message string, fields ...logrus.Fields) {
 	}
 	entry := Get().WithField("error", err)
 	var appErr *apperror.AppError
-	if !errors.As(err, &appErr) {
+	if errors.As(err, &appErr) {
 		entry = entry.WithFields(logrus.Fields{"app_code": appErr.AppCode, "message": appErr.Message})
 	}
 
@@ -118,7 +118,7 @@ func FatalOnError(err error, message string, fields ...logrus.Fields) {
 	}
 	entry := Get().WithField("fatal_error", err)
 	var appErr *apperror.AppError
-	if !errors.As(err, &appErr) {
+	if errors.As(err, &appErr) {
 		entry = entry.WithFields(logrus.Fields{"app_code": appErr.AppCode, "message": appErr.Message})
 	}
 	if len(fields) > 0 {
