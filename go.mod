@@ -2,7 +2,10 @@ module github.com/PrototypeSirius/ruglogger
 
 go 1.24.2
 
-require github.com/gin-gonic/gin v1.11.0
+require (
+	github.com/gin-gonic/gin v1.11.0
+	github.com/gorilla/websocket v1.5.3
+)
 
 require (
 	github.com/bytedance/sonic v1.14.0 // indirect
