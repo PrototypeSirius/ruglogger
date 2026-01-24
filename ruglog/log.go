@@ -57,25 +57,28 @@ var (
 	once     sync.Once
 )
 
-func Init(level Level, ftime string, filePath string) error {
+func Init(level Level, formatTime string, filePath string) error {
 	var err error
 	once.Do(func() {
 		var out io.Writer = os.Stdout
+		var closer io.Closer
 		if filePath != "" {
-			file, fErr := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-			if fErr != nil {
-				err = fErr
+			file, Err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if Err != nil {
+				err = Err
 				return
 			}
 			out = file
+			closer = file
 		}
-		if ftime == "" {
-			ftime = time.RFC3339
+		if formatTime == "" {
+			formatTime = time.RFC3339
 		}
 		instance = &Logger{
 			output:     out,
+			closer:     closer,
 			level:      level,
-			formatTime: ftime,
+			formatTime: formatTime,
 		}
 	})
 	return err
