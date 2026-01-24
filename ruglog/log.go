@@ -47,6 +47,7 @@ type LogEntry struct {
 type Logger struct {
 	mu         sync.Mutex
 	output     io.Writer
+	closer     io.Closer
 	level      Level
 	formatTime string
 }
@@ -85,6 +86,15 @@ func Get() *Logger {
 		_ = Init(LevelInfo, "", "")
 	}
 	return instance
+}
+
+func Close() error {
+	if instance != nil && instance.closer != nil {
+		instance.mu.Lock()
+		defer instance.mu.Unlock()
+		return instance.closer.Close()
+	}
+	return nil
 }
 
 func (l *Logger) Log(level Level, msg string, err error, appCode int, fields map[string]any) {
