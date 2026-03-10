@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"io"
+	"strings"
 	"time"
 
 	logger "github.com/PrototypeSirius/ruglogger/ruglog"
@@ -14,7 +15,9 @@ func StructuredLogHandler() gin.HandlerFunc {
 		start := time.Now()
 
 		var body []byte
-		if c.Request.Body != nil {
+		contentType := c.GetHeader("Content-Type")
+
+		if c.Request.Body != nil && !strings.HasPrefix(contentType, "multipart/form-data") {
 			body, _ = io.ReadAll(io.LimitReader(c.Request.Body, 16384))
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 		}
