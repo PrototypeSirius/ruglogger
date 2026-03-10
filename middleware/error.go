@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 
 	apperror "github.com/PrototypeSirius/ruglogger/rugerror"
 	logger "github.com/PrototypeSirius/ruglogger/ruglog"
@@ -15,7 +16,9 @@ import (
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body []byte
-		if c.Request.Body != nil {
+		contentType := c.GetHeader("Content-Type")
+
+		if c.Request.Body != nil && !strings.HasPrefix(contentType, "multipart/form-data") {
 			body, _ = io.ReadAll(io.LimitReader(c.Request.Body, 16384))
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 		}
